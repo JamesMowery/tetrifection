@@ -73,22 +73,84 @@ unique_name_in_owner = true
 stream = SubResource("AudioStreamInteractive_ii76b")
 autoplay = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="ScoreContainer" type="VBoxContainer" parent="."]
 offset_left = 832.0
 offset_top = 1024.0
 offset_right = 1152.0
 offset_bottom = 1280.0
 alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="VBoxContainer"]
+[node name="ScoreLabel" type="Label" parent="ScoreContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
 text = "SCORE"
 horizontal_alignment = 1
 
-[node name="ScoreData" type="Label" parent="VBoxContainer"]
+[node name="ScoreData" type="Label" parent="ScoreContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
 text = "000000"
 horizontal_alignment = 1
+
+[node name="GameOverContainer" type="ColorRect" parent="."]
+unique_name_in_owner = true
+offset_right = 640.0
+offset_bottom = 1280.0
+color = Color(0, 0, 0, 0.490196)
+
+[node name="VBGameOver" type="VBoxContainer" parent="GameOverContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="EndGameOverLabel" type="Label" parent="GameOverContainer/VBGameOver"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="Margin1" type="Control" parent="GameOverContainer/VBGameOver"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="EndScoreLabel" type="Label" parent="GameOverContainer/VBGameOver"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "FINAL SCORE"
+horizontal_alignment = 1
+
+[node name="EndScoreData" type="Label" parent="GameOverContainer/VBGameOver"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "000000"
+horizontal_alignment = 1
+
+[node name="Margin2" type="Control" parent="GameOverContainer/VBGameOver"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="Margin3" type="Control" parent="GameOverContainer/VBGameOver"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="ButtonNewGame" type="Button" parent="GameOverContainer/VBGameOver"]
+unique_name_in_owner = true
+process_mode = 3
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "New Game"
+
+[node name="ButtonQuit" type="Button" parent="GameOverContainer/VBGameOver"]
+process_mode = 3
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "Exit Game"
+
+[connection signal="pressed" from="GameOverContainer/VBGameOver/ButtonNewGame" to="." method="_on_button_new_game_pressed"]
+[connection signal="pressed" from="GameOverContainer/VBGameOver/ButtonQuit" to="." method="_on_button_quit_pressed"]

@@ -9,6 +9,8 @@ signal scored(score_amount: int)
 @onready var sfx_next_level: AudioStreamPlayer = %SFX_NextLevel
 @onready var score_data: Label = %ScoreData
 @onready var bgm_interactive: AudioStreamPlayer = %BGMInteractive
+@onready var game_over_container: ColorRect = %GameOverContainer
+@onready var button_new_game: Button = %ButtonNewGame
 
 # Board
 @export var board_columns: int = 10
@@ -62,15 +64,16 @@ var danger: bool = false
 var danger_playing: bool = false
 
 func _ready() -> void:
+	game_over_container.hide()
 	scored.connect(update_score)
 	score_data.text = "0"
 	speed = 1.0
 	steps = 0
 	create_board_grid()
 
-	# Uncomment to randomize start
+	# Randomize start
 	colors_bag.shuffle()
-	#pieces_bag.shuffle()
+	pieces_bag.shuffle()
 	create_piece()
 
 func _process(delta: float) -> void:
@@ -305,4 +308,13 @@ func check_game_over() -> void:
 
 		if piece_layer.get_cell_source_id(Vector2i(x, 2)) != -1:
 			#print("Game Over")
+			game_over_container.show()
+			button_new_game.grab_focus()
 			get_tree().paused = true
+
+func _on_button_new_game_pressed() -> void:
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_button_quit_pressed() -> void:
+	get_tree().quit()

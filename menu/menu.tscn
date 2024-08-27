@@ -50,6 +50,7 @@ text = "New Game"
 
 [node name="Settings" type="Button" parent="MC/MainMenu"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme = ExtResource("2_lcbj8")
 text = "Settings"
