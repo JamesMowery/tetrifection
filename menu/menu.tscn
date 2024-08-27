@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cend8lfxl6qip" path="res://assets/sprites/splash.jpeg" id="1_mwq65"]
 [ext_resource type="PackedScene" uid="uid://b8ysee87pvxp4" path="res://game/game.tscn" id="2_6qeq7"]
 [ext_resource type="Theme" uid="uid://dfyyqlnglrtag" path="res://menu/menu_theme.tres" id="2_lcbj8"]
-[ext_resource type="AudioStream" uid="uid://bk7cwtm6rdgdi" path="res://assets/music/tetrifection.wav" id="5_5j5ly"]
+[ext_resource type="AudioStream" uid="uid://cd0e57agsvbl0" path="res://assets/music/tetrifection_menu.wav" id="5_em8hf"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -61,7 +61,7 @@ theme = ExtResource("2_lcbj8")
 text = "Exit"
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_5j5ly")
+stream = ExtResource("5_em8hf")
 autoplay = true
 
 [connection signal="pressed" from="MC/MainMenu/NewGame" to="." method="_on_new_game_pressed"]

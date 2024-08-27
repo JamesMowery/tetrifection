@@ -1,11 +1,35 @@
-[gd_scene load_steps=7 format=4 uid="uid://b8ysee87pvxp4"]
+[gd_scene load_steps=9 format=4 uid="uid://b8ysee87pvxp4"]
 
 [ext_resource type="Script" path="res://game/game.gd" id="1_ia6df"]
 [ext_resource type="AudioStream" uid="uid://d1w4ttd6ywtw4" path="res://assets/sounds/settle.wav" id="3_1ikwo"]
 [ext_resource type="TileSet" uid="uid://ckeitfo07151n" path="res://game/tilemap.tres" id="3_c4wfy"]
 [ext_resource type="AudioStream" uid="uid://dwbjuq4hklwi6" path="res://assets/sounds/clear.wav" id="4_lxhe6"]
 [ext_resource type="AudioStream" uid="uid://citcw3api16ce" path="res://assets/sounds/next_level.wav" id="4_tfuta"]
-[ext_resource type="AudioStream" uid="uid://bk7cwtm6rdgdi" path="res://assets/music/tetrifection.wav" id="5_rj3xq"]
+[ext_resource type="AudioStream" uid="uid://d3v2l7v0x8sx1" path="res://assets/music/tetrifection_full.wav" id="6_kc7xo"]
+[ext_resource type="AudioStream" uid="uid://bttdw5tw8eu2f" path="res://assets/music/tetrifection_alt.wav" id="7_gpy5p"]
+
+[sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_ii76b"]
+clip_count = 2
+clip_0/name = &"Tetrifection Full"
+clip_0/stream = ExtResource("6_kc7xo")
+clip_0/auto_advance = 0
+clip_1/name = &"Tetrifection Alt"
+clip_1/stream = ExtResource("7_gpy5p")
+clip_1/auto_advance = 0
+_transitions = {
+Vector2i(0, 1): {
+"fade_beats": 2,
+"fade_mode": 4,
+"from_time": 2,
+"to_time": 0
+},
+Vector2i(1, 0): {
+"fade_beats": 2,
+"fade_mode": 4,
+"from_time": 2,
+"to_time": 0
+}
+}
 
 [node name="Game" type="Node2D" groups=["this_piece"]]
 script = ExtResource("1_ia6df")
@@ -42,7 +66,11 @@ stream = ExtResource("4_lxhe6")
 
 [node name="BGM" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
-stream = ExtResource("5_rj3xq")
+stream = ExtResource("6_kc7xo")
+
+[node name="BGMInteractive" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = SubResource("AudioStreamInteractive_ii76b")
 autoplay = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]

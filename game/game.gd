@@ -8,6 +8,7 @@ signal scored(score_amount: int)
 @onready var sfx_clear: AudioStreamPlayer = %SFX_Clear
 @onready var sfx_next_level: AudioStreamPlayer = %SFX_NextLevel
 @onready var score_data: Label = %ScoreData
+@onready var bgm_interactive: AudioStreamPlayer = %BGMInteractive
 
 # Board
 @export var board_columns: int = 10
@@ -55,6 +56,10 @@ var next_piece_atlas: Vector2i
 # Scoring
 var score_amount: int = 100
 var lines_cleared: int = 0
+
+# Sound & Music
+var danger: bool = false
+var danger_playing: bool = false
 
 func _ready() -> void:
 	scored.connect(update_score)
@@ -286,7 +291,18 @@ func update_score(score_increment: int) -> void:
 
 func check_game_over() -> void:
 	for x in range(0, 10):
+		if piece_layer.get_cell_source_id(Vector2i(x, 6)) != -1:
+			#print("Danger")
+			danger = true
+			if danger == true and danger_playing == false:
+				danger_playing = true
+				bgm_interactive["parameters/switch_to_clip"] = "Tetrifection Alt"
+		#else:
+			#danger = false
+			#if danger == false and danger_playing == true:
+			#	danger_playing = false
+			#	bgm_interactive["parameters/switch_to_clip"] = "Tetrifection Full"
+
 		if piece_layer.get_cell_source_id(Vector2i(x, 2)) != -1:
-			print("GAME OVER!!!")
-			# Show Game Over Menu
+			#print("Game Over")
 			get_tree().paused = true
