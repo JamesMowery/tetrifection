@@ -1,0 +1,69 @@
+[gd_scene load_steps=6 format=3 uid="uid://dr5jsd5jlhsbl"]
+
+[ext_resource type="Script" path="res://menu/menu.gd" id="1_jq88u"]
+[ext_resource type="Texture2D" uid="uid://cend8lfxl6qip" path="res://assets/sprites/splash.jpeg" id="1_mwq65"]
+[ext_resource type="PackedScene" uid="uid://b8ysee87pvxp4" path="res://game/game.tscn" id="2_6qeq7"]
+[ext_resource type="Theme" uid="uid://dfyyqlnglrtag" path="res://menu/menu_theme.tres" id="2_lcbj8"]
+[ext_resource type="AudioStream" uid="uid://bk7cwtm6rdgdi" path="res://assets/music/tetrifection.wav" id="5_5j5ly"]
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jq88u")
+game_scene = ExtResource("2_6qeq7")
+
+[node name="BG" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -305.0
+offset_bottom = 71.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_mwq65")
+
+[node name="MC" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_bottom = 120
+
+[node name="MainMenu" type="HBoxContainer" parent="MC"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="NewGame" type="Button" parent="MC/MainMenu"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("2_lcbj8")
+text = "New Game"
+
+[node name="Settings" type="Button" parent="MC/MainMenu"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("2_lcbj8")
+text = "Settings"
+
+[node name="ExitGame" type="Button" parent="MC/MainMenu"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("2_lcbj8")
+text = "Exit"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_5j5ly")
+autoplay = true
+
+[connection signal="pressed" from="MC/MainMenu/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="MC/MainMenu/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="MC/MainMenu/ExitGame" to="." method="_on_exit_game_pressed"]
