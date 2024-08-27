@@ -11,6 +11,7 @@ signal scored(score_amount: int)
 @onready var bgm_interactive: AudioStreamPlayer = %BGMInteractive
 @onready var game_over_container: ColorRect = %GameOverContainer
 @onready var button_new_game: Button = %ButtonNewGame
+@onready var end_score_data: Label = %EndScoreData
 
 # Board
 @export var board_columns: int = 10
@@ -308,6 +309,7 @@ func check_game_over() -> void:
 
 		if piece_layer.get_cell_source_id(Vector2i(x, 2)) != -1:
 			#print("Game Over")
+			end_score_data.text = score_data.text
 			game_over_container.show()
 			button_new_game.grab_focus()
 			get_tree().paused = true
