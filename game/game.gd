@@ -23,7 +23,8 @@ var board: Array = []
 
 enum PIECE_TYPE {
 	CURRENT,
-	NEXT
+	NEXT,
+	GHOST
 }
 
 # Piece Grids		 [PIVOT         , GRID[0]       , GRID[1]		, GRID[2]		, GRID[3]		]
@@ -41,6 +42,7 @@ var colors_bag: Array = colors.duplicate()
 
 # Game Piece Variables
 var current_piece: Array
+var ghost_piece: Array
 var next_piece: Array
 var rotation_index: int = 0
 var drop_complete: bool = false
@@ -89,6 +91,7 @@ func _process(delta: float) -> void:
 	if steps > steps_req:
 		move_piece(Vector2i.DOWN)
 		steps = 0
+		#draw_ghost()
 
 func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("move_left"):
@@ -171,15 +174,16 @@ func move_piece(direction: Vector2i) -> void:
 			check_game_over()
 			create_piece()
 
-func drop_piece() -> void:
-	while drop_complete != true:
-		if can_move(Vector2i.DOWN):
-			clear_piece(PIECE_TYPE.CURRENT)
-			current_position += Vector2i.DOWN
-			draw_piece(current_piece, current_position, current_piece_atlas)
-		else:
-			drop_complete = true
-			drop_timer.stop()
+func drop_piece(piece_type: PIECE_TYPE) -> void:
+	if piece_type == PIECE_TYPE.CURRENT:
+		while drop_complete != true:
+			if can_move(Vector2i.DOWN):
+				clear_piece(PIECE_TYPE.CURRENT)
+				current_position += Vector2i.DOWN
+				draw_piece(current_piece, current_position, current_piece_atlas)
+			else:
+				drop_complete = true
+				drop_timer.stop()
 
 func pick_color() -> Vector2i:
 	var picked_color: int
@@ -246,12 +250,6 @@ func can_move(direction: Vector2i) -> bool:
 				if not is_free(current_piece[i] + current_position + direction, 0):
 					moving = false
 					check_clear()
-	else:
-		for i in current_piece.size():
-			if i != 0:
-				if not is_free(current_piece[i] + current_position + direction, 0):
-					pass
-					#moving = false
 
 	return moving
 
@@ -285,6 +283,7 @@ func check_clear() -> void:
 			if not y_values.has((current_position + current_piece[i]).y):
 				y_values.append((current_position + current_piece[i]).y)
 
+	var rows_to_drop: Array = []
 	for y in y_values.size():
 		x_count = 0
 		for x in range(0, 10):
@@ -292,16 +291,18 @@ func check_clear() -> void:
 				x_count += 1
 				if x_count == 10:
 					clear_row(y_values[y])
-					drop_rows(y_values[y])
+					rows_to_drop.append(y_values[y])
 					sfx_clear.play()
 					scored.emit(score_amount)
 					lines_cleared += 1
 					if lines_cleared % 10 == 0:
 						speed += 1.0
 						sfx_next_level.play()
+	for row in rows_to_drop:
+		drop_rows(row)
 
 func drop_rows(y_value: int) -> void:
-	for row in range(y_value, -1, -1):
+	for row in range(y_value, 0, -1):
 		for col in range(0, 10):
 			var existing_piece
 			var existing_color
@@ -339,4 +340,11 @@ func _on_button_quit_pressed() -> void:
 
 func _on_drop_timer_timeout() -> void:
 	drop_complete = false
-	drop_piece()
+	drop_piece(PIECE_TYPE.CURRENT)
+
+func draw_ghost() -> void:
+	# Duplicate the current_piece into ghost
+	ghost_piece = current_piece.duplicate()
+	# Get the lowest x coordinates for each piece
+	# Detect the highest collision for each lowest x coordinate
+	# Draw the piece above the highest collision
