@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://b8ysee87pvxp4"]
+[gd_scene load_steps=10 format=4 uid="uid://b8ysee87pvxp4"]
 
 [ext_resource type="Script" path="res://game/game.gd" id="1_ia6df"]
 [ext_resource type="AudioStream" uid="uid://d1w4ttd6ywtw4" path="res://assets/sounds/settle.wav" id="3_1ikwo"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://citcw3api16ce" path="res://assets/sounds/next_level.wav" id="4_tfuta"]
 [ext_resource type="AudioStream" uid="uid://d3v2l7v0x8sx1" path="res://assets/music/tetrifection_full.wav" id="6_kc7xo"]
 [ext_resource type="AudioStream" uid="uid://bttdw5tw8eu2f" path="res://assets/music/tetrifection_alt.wav" id="7_gpy5p"]
+[ext_resource type="Script" path="res://ui/ui_pause.gd" id="8_16dyp"]
 
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_ii76b"]
 clip_count = 2
@@ -93,13 +94,15 @@ theme_override_font_sizes/font_size = 48
 text = "000000"
 horizontal_alignment = 1
 
-[node name="GameOverContainer" type="ColorRect" parent="."]
+[node name="UIOverlay" type="ColorRect" parent="."]
 unique_name_in_owner = true
 offset_right = 640.0
 offset_bottom = 1280.0
 color = Color(0, 0, 0, 0.490196)
 
-[node name="VBGameOver" type="VBoxContainer" parent="GameOverContainer"]
+[node name="UIGameOver" type="VBoxContainer" parent="UIOverlay"]
+unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,49 +111,97 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="EndGameOverLabel" type="Label" parent="GameOverContainer/VBGameOver"]
+[node name="EndGameOverLabel" type="Label" parent="UIOverlay/UIGameOver"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 72
 text = "GAME OVER"
 horizontal_alignment = 1
 
-[node name="Margin1" type="Control" parent="GameOverContainer/VBGameOver"]
+[node name="Margin1" type="Control" parent="UIOverlay/UIGameOver"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="EndScoreLabel" type="Label" parent="GameOverContainer/VBGameOver"]
+[node name="EndScoreLabel" type="Label" parent="UIOverlay/UIGameOver"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 72
 text = "FINAL SCORE"
 horizontal_alignment = 1
 
-[node name="EndScoreData" type="Label" parent="GameOverContainer/VBGameOver"]
+[node name="EndScoreData" type="Label" parent="UIOverlay/UIGameOver"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 72
 text = "000000"
 horizontal_alignment = 1
 
-[node name="Margin2" type="Control" parent="GameOverContainer/VBGameOver"]
+[node name="Margin2" type="Control" parent="UIOverlay/UIGameOver"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="Margin3" type="Control" parent="GameOverContainer/VBGameOver"]
+[node name="Margin3" type="Control" parent="UIOverlay/UIGameOver"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="ButtonNewGame" type="Button" parent="GameOverContainer/VBGameOver"]
+[node name="ButtonNewGame" type="Button" parent="UIOverlay/UIGameOver"]
 unique_name_in_owner = true
 process_mode = 3
 layout_mode = 2
 theme_override_font_sizes/font_size = 72
 text = "New Game"
 
-[node name="ButtonQuit" type="Button" parent="GameOverContainer/VBGameOver"]
+[node name="ButtonQuit" type="Button" parent="UIOverlay/UIGameOver"]
 process_mode = 3
 layout_mode = 2
 theme_override_font_sizes/font_size = 72
 text = "Exit Game"
 
-[connection signal="pressed" from="GameOverContainer/VBGameOver/ButtonNewGame" to="." method="_on_button_new_game_pressed"]
-[connection signal="pressed" from="GameOverContainer/VBGameOver/ButtonQuit" to="." method="_on_button_quit_pressed"]
+[node name="UIPause" type="VBoxContainer" parent="UIOverlay"]
+unique_name_in_owner = true
+process_mode = 3
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+script = ExtResource("8_16dyp")
+
+[node name="EndGameOverLabel" type="Label" parent="UIOverlay/UIPause"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "GAME PAUSED"
+horizontal_alignment = 1
+
+[node name="Margin4" type="Control" parent="UIOverlay/UIPause"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="Margin5" type="Control" parent="UIOverlay/UIPause"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="ButtonUnpause" type="Button" parent="UIOverlay/UIPause"]
+process_mode = 3
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "Unpause"
+
+[node name="ButtonNewGame2" type="Button" parent="UIOverlay/UIPause"]
+unique_name_in_owner = true
+process_mode = 3
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "New Game"
+
+[node name="DropTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 0.5
+one_shot = true
+
+[connection signal="pressed" from="UIOverlay/UIGameOver/ButtonNewGame" to="." method="_on_button_new_game_pressed"]
+[connection signal="pressed" from="UIOverlay/UIGameOver/ButtonQuit" to="." method="_on_button_quit_pressed"]
+[connection signal="pressed" from="UIOverlay/UIPause/ButtonUnpause" to="UIOverlay/UIPause" method="_on_button_unpause_pressed"]
+[connection signal="pressed" from="UIOverlay/UIPause/ButtonNewGame2" to="." method="_on_button_new_game_pressed"]
+[connection signal="timeout" from="DropTimer" to="." method="_on_drop_timer_timeout"]

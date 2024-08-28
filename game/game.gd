@@ -9,9 +9,12 @@ signal scored(score_amount: int)
 @onready var sfx_next_level: AudioStreamPlayer = %SFX_NextLevel
 @onready var score_data: Label = %ScoreData
 @onready var bgm_interactive: AudioStreamPlayer = %BGMInteractive
-@onready var game_over_container: ColorRect = %GameOverContainer
+@onready var ui_overlay: ColorRect = %UIOverlay
+@onready var ui_game_over: VBoxContainer = %UIGameOver
+@onready var ui_pause: VBoxContainer = %UIPause
 @onready var button_new_game: Button = %ButtonNewGame
 @onready var end_score_data: Label = %EndScoreData
+@onready var drop_timer: Timer = %DropTimer
 
 # Board
 @export var board_columns: int = 10
@@ -40,6 +43,7 @@ var colors_bag: Array = colors.duplicate()
 var current_piece: Array
 var next_piece: Array
 var rotation_index: int = 0
+var drop_complete: bool = false
 
 # Movement Variables
 const starting_position: Vector2i = Vector2i(4, 0)
@@ -65,7 +69,9 @@ var danger: bool = false
 var danger_playing: bool = false
 
 func _ready() -> void:
-	game_over_container.hide()
+	ui_overlay.hide()
+	ui_game_over.hide()
+	ui_pause.hide()
 	scored.connect(update_score)
 	score_data.text = "0"
 	speed = 1.0
@@ -93,6 +99,11 @@ func _physics_process(delta: float) -> void:
 		rotate_piece_ccw(PIECE_TYPE.CURRENT)
 	if Input.is_action_pressed("move_down"):
 		steps += 10
+	if Input.is_action_just_pressed("move_down"):
+		drop_complete = true
+		drop_timer.start()
+	if Input.is_action_just_released("move_down"):
+		drop_timer.stop()
 
 # Creates and initializes the board grid
 func create_board_grid() -> void:
@@ -155,9 +166,20 @@ func move_piece(direction: Vector2i) -> void:
 		draw_piece(current_piece, current_position, current_piece_atlas)
 	else:
 		if direction == Vector2i.DOWN:
+			drop_complete = true
 			sfx_settle.play()
 			check_game_over()
 			create_piece()
+
+func drop_piece() -> void:
+	while drop_complete != true:
+		if can_move(Vector2i.DOWN):
+			clear_piece(PIECE_TYPE.CURRENT)
+			current_position += Vector2i.DOWN
+			draw_piece(current_piece, current_position, current_piece_atlas)
+		else:
+			drop_complete = true
+			drop_timer.stop()
 
 func pick_color() -> Vector2i:
 	var picked_color: int
@@ -209,7 +231,6 @@ func rotate_piece_ccw(piece_type: PIECE_TYPE) -> void:
 
 func can_move(direction: Vector2i) -> bool:
 	var moving: bool = true
-
 	# General Check
 	for i in current_piece.size():
 		if i != 0:
@@ -296,21 +317,16 @@ func update_score(score_increment: int) -> void:
 func check_game_over() -> void:
 	for x in range(0, 10):
 		if piece_layer.get_cell_source_id(Vector2i(x, 6)) != -1:
-			#print("Danger")
 			danger = true
 			if danger == true and danger_playing == false:
 				danger_playing = true
 				bgm_interactive["parameters/switch_to_clip"] = "Tetrifection Alt"
-		#else:
-			#danger = false
-			#if danger == false and danger_playing == true:
-			#	danger_playing = false
-			#	bgm_interactive["parameters/switch_to_clip"] = "Tetrifection Full"
 
 		if piece_layer.get_cell_source_id(Vector2i(x, 2)) != -1:
-			#print("Game Over")
 			end_score_data.text = score_data.text
-			game_over_container.show()
+			ui_overlay.show()
+			ui_pause.hide()
+			ui_game_over.show()
 			button_new_game.grab_focus()
 			get_tree().paused = true
 
@@ -320,3 +336,7 @@ func _on_button_new_game_pressed() -> void:
 
 func _on_button_quit_pressed() -> void:
 	get_tree().quit()
+
+func _on_drop_timer_timeout() -> void:
+	drop_complete = false
+	drop_piece()
